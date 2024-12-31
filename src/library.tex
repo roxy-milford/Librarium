@@ -3,15 +3,26 @@
 \input{aditional_packages}
 
 \begin{document}
-% \dominitoc % Initialization
 
+% ----------------------------------------------------------
+%           Title
+% ----------------------------------------------------------
 \input{title}
 
+% ----------------------------------------------------------
+%           Table of contents
+% ----------------------------------------------------------
 % \shorttableofcontents{Short contents}{0}
 
 % \renewcommand*\contentsname{Detailed contents}
-% \tableofcontents  % need to be after all of the contents (???)
+\tableofcontents  % need to be after all of the contents (???)
+\newpage
 
+% ----------------------------------------------------------
+%           Main body
+% ----------------------------------------------------------
+
+\input{chapters/introduction.tex}
 % \input{chapters/texts}
 % \input{chapters/emergency}
 % \input{chapters/desisions}
@@ -19,9 +30,12 @@
 % \input{chapters/rules}
 % \input{chapters/plans}
 
+% ----------------------------------------------------------
+%           Citations
+% ----------------------------------------------------------
 
 % \cite{greenwade93}
-% \bibliographystyle{alpha}
-% \bibliography{sample}
+\bibliographystyle{alpha}
+\bibliography{sample}
 
 \end{document}
