@@ -1,0 +1,96 @@
+%---------------------------------------------------------------------
+%                   Additional packages for the project
+%---------------------------------------------------------------------
+
+%---------------------------------------------------------------------
+%                       Page paramethers
+%---------------------------------------------------------------------
+
+\usepackage{fullpage}
+\usepackage{indentfirst} % Append indent for the first line in the section
+\usepackage{url}
+
+%---------------------------------------------------------------------
+%                       Graphicx
+%---------------------------------------------------------------------
+
+\usepackage{longtable}
+\setlength{\LTcapwidth}{\textwidth} % set longtable caption width as \textwidth
+\usepackage{array}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+\usepackage{graphicx} % Required for inserting images
+
+% \labelformat{table}{\textit{tab.}\,#1}
+% \labelformat{figure}{\textit{fig.}\,#1}
+
+%---------------------------------------------------------------------
+%                       Math packages
+%---------------------------------------------------------------------
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+%---------------------------------------------------------------------
+%                       Math operators
+%---------------------------------------------------------------------
+
+\DeclareMathOperator{\Eval}{Eval}
+\DeclareMathOperator{\Gen}{Gen}
+\DeclareMathOperator{\Enc}{Enc}
+\DeclareMathOperator{\Dec}{Dec}
+\DeclareMathOperator{\Sig}{Sig}
+\DeclareMathOperator{\Verif}{Verif}
+\DeclareMathOperator{\Dh}{DH}
+\DeclareMathOperator{\KDF}{KDF}
+\DeclareMathOperator{\Encode}{Encode}
+\DeclareMathOperator{\Hash}{H}
+
+%---------------------------------------------------------------------
+%                       Math environments
+%---------------------------------------------------------------------
+
+% \theoremstyle{plain}
+% \newtheorem{theorem}{Theorem}[section]
+% \newtheorem{claim}{Claim}[section]
+% \newtheorem{lemma}{Lemma}[section]
+% \newtheorem{corollary}{Corollary}[section]
+
+% \theoremstyle{definition}
+% \newtheorem{definition}{Definition}[section]
+% \newtheorem{algorithm}{Algorithm}[section]
+% \newtheorem{problem}{Problem}[section]
+% \newtheorem{example}{Example}[section]
+
+% \theoremstyle{remark}
+% \newtheorem*{remark}{\textbf{Remark}}
+
+%---------------------------------------------------------------------
+%                       Links
+%---------------------------------------------------------------------
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    % citecolor = black,
+    % filecolor = black,
+    % linkcolor = black,
+    % urlcolor = blue
+    % anchorcolor = black,
+    % menucolor = red,
+    % runcolor = cyan,
+    allcolors = black
+}
+
+%---------------------------------------------------------------------
+%                       Enumeraion
+%---------------------------------------------------------------------
+
+\usepackage[inline]{enumitem}
+\setlist[itemize]{noitemsep, topsep=0pt}
+\setlist[enumerate]{noitemsep, topsep=0pt}
+
+%---------------------------------------------------------------------
+%                       End
+%---------------------------------------------------------------------
