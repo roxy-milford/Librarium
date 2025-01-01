@@ -1,5 +1,9 @@
 \documentclass[oneside, 12pt]{book}
 
+\usepackage[T2A, T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english, ukrainian]{babel}
+
 \input{aditional_packages}
 
 \begin{document}
@@ -12,17 +16,20 @@
 % ----------------------------------------------------------
 %           Table of contents
 % ----------------------------------------------------------
-% \shorttableofcontents{Short contents}{0}
 
+\dominitoc
 % \renewcommand*\contentsname{Detailed contents}
 \tableofcontents  % need to be after all of the contents (???)
 \newpage
+
 
 % ----------------------------------------------------------
 %           Main body
 % ----------------------------------------------------------
 
 \input{chapters/introduction.tex}
+
+\input{chapters/philosophy.tex}
 
 
 % ----------------------------------------------------------
