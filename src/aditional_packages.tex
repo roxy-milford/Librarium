@@ -7,7 +7,8 @@
 %---------------------------------------------------------------------
 
 \usepackage{fullpage}
-\usepackage{indentfirst} % Append indent for the first line in the section
+% \usepackage{indentfirst} % Append indent for the first line in the section
+\usepackage{parskip}
 \usepackage{url}
 
 %---------------------------------------------------------------------
@@ -19,18 +20,40 @@
 \usepackage{array}
 \newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
 \usepackage{graphicx} % Required for inserting images
+\usepackage{multicol}
+
 
 % \labelformat{table}{\textit{tab.}\,#1}
 % \labelformat{figure}{\textit{fig.}\,#1}
 
 %---------------------------------------------------------------------
-%                       Math packages
+%                       Math
 %---------------------------------------------------------------------
-
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{cancel}
+\usepackage{xparse}
+\usepackage{faktor}
+\usepackage{mathabx}
+
+
+\makeatletter
+\providecommand*{\diff}{\@ifnextchar^{\DIfF}{\DIfF^{}}}
+\def\DIfF^#1{\mathop{\mathrm{\mathstrut d}}\nolimits^{#1}\gobblespace}
+\def\gobblespace{\futurelet\diffarg\opspace}
+\def\opspace{%
+    \let\DiffSpace\!%
+    \ifx\diffarg(%
+        \let\DiffSpace\relax
+    \else
+    \ifx\diffarg[%
+        \let\DiffSpace\relax
+    \else
+    \ifx\diffarg\{%
+        \let\DiffSpace\relax
+    \fi\fi\fi\DiffSpace}
 
 %---------------------------------------------------------------------
 %                       Math operators
@@ -47,24 +70,36 @@
 \DeclareMathOperator{\Encode}{Encode}
 \DeclareMathOperator{\Hash}{H}
 
+\DeclareMathOperator*{\amper}{\&}
+\DeclareMathOperator{\h}{h}
+\DeclareMathOperator{\pad}{pad}
+\newcommand*{\xor}{\ensuremath \oplus}
+\DeclareMathOperator{\rang}{rang}
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\im}{Im}
+\DeclareRobustCommand{\divby}{\mathrel{\text{\vbox{\baselineskip.65ex\lineskiplimit0pt\hbox{.}\hbox{.}\hbox{.}}}}}
+
+
 %---------------------------------------------------------------------
 %                       Math environments
 %---------------------------------------------------------------------
+\usepackage{thmtools}                   % for theorem styles and tools
+\labelformat{theorem}{(\textit{Thr.}\,#1)}
 
-% \theoremstyle{plain}
-% \newtheorem{theorem}{Theorem}[section]
-% \newtheorem{claim}{Claim}[section]
-% \newtheorem{lemma}{Lemma}[section]
-% \newtheorem{corollary}{Corollary}[section]
-
-% \theoremstyle{definition}
-% \newtheorem{definition}{Definition}[section]
-% \newtheorem{algorithm}{Algorithm}[section]
-% \newtheorem{problem}{Problem}[section]
-% \newtheorem{example}{Example}[section]
-
-% \theoremstyle{remark}
-% \newtheorem*{remark}{\textbf{Remark}}
+\declaretheorem[name=Theorem, numberwithin=chapter]{theorem}
+\declaretheorem[name=Corollary, numberwithin=theorem]{corollary}
+\declaretheorem[name=Claim, numberwithin=chapter]{claim}
+\declaretheorem[name=Lemma, numberwithin=chapter]{lemma}
+\declaretheorem[name=Definition, numberwithin=section]{definition}
+\declaretheorem[name=Remark, style=remark, numberwithin=chapter]{remark}
+\declaretheorem[name=Hypothesis, numberwithin=chapter]{hypothesis}
+\declaretheorem[name=Axiom, numberwithin=chapter]{axiom}
+\declaretheorem[name=Problem, numberwithin=chapter]{problem}
+\declaretheorem[name=Attack, numberwithin=chapter]{attack}
+\declaretheorem[name=Solution'язання, style=remark, numberwithin=problem]{solution}
+\declaretheorem[name=Conclusion, numbered=no]{conclusion}
+% \declaretheorem[name=Example, thmbox=M, numberwithin=chapter]{example}
+\declaretheorem[name=Example, numberwithin=chapter]{example}
 
 %---------------------------------------------------------------------
 %                       Links
@@ -85,6 +120,10 @@
 \usepackage{minitoc} % small table of contsnts for every chapter
 \usepackage{shorttoc}
 
+% \labelformat{algocf}{(\textit{alg.}\,#1)} % reference label for algorithms
+% \labelformat{table}{(\textit{tab.}\,#1)}
+% \labelformat{figure}{(\textit{fig.}\,#1)}
+
 %---------------------------------------------------------------------
 %                       Enumeraion
 %---------------------------------------------------------------------
@@ -92,7 +131,53 @@
 \usepackage[inline]{enumitem}
 \setlist[itemize]{noitemsep, topsep=0pt}
 \setlist[enumerate]{noitemsep, topsep=0pt}
+%---------------------------------------------------------------------
+%                       Images
+%---------------------------------------------------------------------
+\usepackage{tikz}                       % for beautiful math images
+\usetikzlibrary{patterns}				% for field figurs
+\usepackage{pgfplots}					% for function ploting
+\pgfplotsset{compat = newest}			% use last version of {pgfplots}
+\usepgfplotslibrary{polar}				% for polar system
+\usepgfplotslibrary{fillbetween}
+\usepackage{wrapfig} 					% for wrapping the text
+\usepackage{graphicx}
+\usepackage{calc}
 
+
+%-------------------------------------------------------------------------------
+%                       Chapter head format
+%-------------------------------------------------------------------------------
+% \makeatletter
+% \def\@makechapterhead#1{%
+%   \vspace*{-40\p@}%
+%   {\parindent \z@ \filleft \normalfont
+%     \ifnum \c@secnumdepth >\m@ne
+%       \if@mainmatter
+%         %\huge\bfseries \@chapapp\space \thechapter
+%        \LARGE\bfseries {\color{gray}\thechapter }\space%
+%         %\par\nobreak
+%         %\vskip 20\p@
+%       \fi
+%     \fi
+%     \interlinepenalty\@M
+%     \LARGE\color{reddy} \bfseries #1\par\nobreak
+%     \vskip 20\p@
+%   }}
+% \makeatother
+
+
+% \makeatletter
+% \def\@makechapterhead#1{%
+%     {\parindent \z@ \raggedleft \normalfont
+%         \ifnum \c@secnumdepth >\m@ne
+%             \huge\bfseries \thechapter.\ % <-- Chapter # (without "Chapter")
+%         \fi
+%         \interlinepenalty\@M
+%         #1\par\nobreak% <------------------ Chapter title
+%         \vskip 40\p@% <------------------ Space between chapter title and first paragraph
+%     }}
+% \makeatother
 %---------------------------------------------------------------------
 %                       End
 %---------------------------------------------------------------------

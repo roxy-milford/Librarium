@@ -1,0 +1,429 @@
+\chapter[Метричнi простори. Повнота i сепарабельнiсть]{Лекцiя 1. Метричнi простори. Повнота i сепарабельнiсть}
+
+
+
+\textbf{Функцiональний аналiз}
+
+поєднує i узагальнює методи математичного аналiзу та лiнiйної алгебри для
+дослiдження складних просторiв, якi переважно складаються з функцiй.
+
+\begin{itemize}
+    \item I. Фредгольм, 1900: $f(x) + \int_{a}^{b} K(x, y) f(y) dy = g(x)$.
+    \item А. Лебег, 1902: визначення iнтегралу $\int_{X} f d \mu$ по абстрактнiй
+        множинi $X$ здовiльною мiрою $\mu$.
+    \item Д. Гiльберт, 1906: визначення гiльбертового простору та розвиток
+        спектральної теорiї.
+    \item М. Фреше, 1906: метричнi простори.
+    \item С. Банах, 1930: теорiя лiнiйних операцiй.
+\end{itemize}
+
+Результати та методи функцiонального аналiзу широко застосовуються в
+лiнiйному програмуваннi, задачах оптимiзацiї, математичнiй фiзицi, теорiї
+перетворення Фур’є, квантовiй фiзицi, теорiї випадкових процесiв тощо.
+
+\textbf{Теми}
+\begin{itemize}
+    \item Метричнi простори.
+    \item Нормованi простори.
+    \item Iнтегрування.
+    \item Лiнiйнi оператори.
+\end{itemize}
+
+\textbf{Лiтература}
+\begin{itemize}
+    \item Березанський Ю. М., Ус Г. Ф., Шефтель З. Г. Функцiональний аналiз:
+        курс лекцiй.
+    \item Кадець В.М. Курс функцiонального аналiзу та теорiї мiри.
+    \item A.N. Kolmogorov, S.V. Fomin. Elements of the Theory of Functions and
+        Functional Analysis.
+    \item A.A. Kirillov, A.D. Gvishiani. Theorems and Problems in Functional Analysis.
+\end{itemize}
+
+\begin{definition}[Метричний простір, метрика]
+    Метричним простором називається пара $(X, d)$, де $X$ ---
+    множина, $d : X \times X \rightarrow R$, такi що
+    \begin{itemize}
+        \item $d(x, y) \geqslant 0; d(x, y) = 0 \Leftrightarrow x = y$;
+        \item $d(x, y) = d(y, x)$;
+        \item $d(x, z) \leqslant d(x, y) + d(y, z)$ (нерiвнiсть трикутника).
+    \end{itemize}
+    $d$ --- метрика (вiдстань) на $X$. Елементи $X$ називають точками.
+\end{definition}
+
+\begin{example}[дискретний простiр]
+    Множина $X$ довiльна.
+    $$d(x, y) = \left\{ \begin{array}{ll}
+        1 & x \neq y \\
+        0 & x = y \\
+    \end{array} \right.$$
+\end{example}
+
+\begin{example}[Евклiдiв простiр]
+    $X = R^n$ або $C^n$
+    $$d(x, y) = \sqrt{\sum\limits_{k=1}^n |x_k - y_k|^2}.$$
+\end{example}
+
+\begin{example}
+    $1 \leqslant p < \infty$; $X = R^n$ або $C^n$
+    $$d_p(x, y) =  \left( \sqrt{\sum\limits_{k=1}^{n}} |x_k - y_k|^p \right)^{\frac{1}{p}}$$
+\end{example}
+
+\begin{example}
+    $X = R^n$ або $C^n$
+    $$d_{\infty}(x, y) = \max\limits_{1 \leqslant k \leqslant n} |x_k - y_k|.$$
+\end{example}
+
+\begin{claim}
+\end{claim}
+Нехай $a$, $b \geqslant 0$, $1 < p < \infty$, $q = \frac{p}{f-1}$ (так,
+що $\frac{1}{p} + \frac{1}{q} = 1$. Тодi
+$$ab \leqslant \frac{a^p}{p} + \frac{b^q}{q}$$
+\begin{proof}
+    Функцiя $x \mapsto \ln x$ угнута. Отже
+    $$ab = \exp(\ln a + \ln b) = \exp \left( \frac{1}{p} \ln a^p + \frac{1}{q} \ln b^q \right)
+    \leqslant \exp \left( \ln \left( \frac{1}{p} a^p + \frac{1}{q} b^q \right) \right)
+    = \frac{1}{p} a^p + \frac{1}{q} b^q.$$
+\end{proof}
+
+\begin{corollary}[нерiвнiсть Гельдера]
+    Нехай $a_1, ..., a_n$, $b_1, ..., b_n$ $\in \mathbb{C}$, $1 < p < \infty$,
+    $q = \frac{p}{p-1}$. Тодi
+    $$\sum\limits_{k=1}^{n} |a_k b_k|
+    \leqslant \left( \sum\limits_{k=1}^{n} |a_k|^p \right)^{\frac{1}{p}} \left( \sum\limits_{k=1}^{n} |b_k|^q \right)^{\frac{1}{q}}.$$
+\end{corollary}
+\begin{proof}
+    Нехай $\alpha_k = \dfrac{|a_k|}{\left( \sum\limits_{j=1}^{n} |a_j|^p \right)^{\frac{1}{p}}}$,
+    $\beta_k = \dfrac{|b_k|}{\left( \sum\limits_{j=1}^{n} |b_j|^p \right)^{\frac{1}{p}}}$.
+    Тодi
+    $$\sum\limits_{k=1}^n \alpha_k \beta_k \leqslant
+    \dfrac{1}{p} \sum\limits_{k=1}^n \alpha_k^p + \dfrac{1}{q} \sum\limits_{k=1}^n \beta_k^q
+    = 1.$$
+    
+    Отже,
+    $$\sum\limits_{k=1}^n |a_k b_k| \leqslant
+    \left( \sum\limits_{k=1}^n |a_k|^p\right)^{\dfrac{1}{p}} + \left( \sum\limits_{k=1}^n |b_k|^q\right)^{\dfrac{1}{q}}.$$
+\end{proof}
+
+\begin{corollary}[нерiвнiсть Мiнковського]
+    Нехай $a_1, ..., a_n, b_1, ..., b_n \in \mathbb{C}$, $1 \leqslant p < \infty$. Тодi
+    $$\left( \sum\limits_{k=1}^n |a_k + b_k|^p \right)^{\frac{1}{p}} \leqslant
+    \left( \sum\limits_{k=1}^n |a_k|^p \right)^{\frac{1}{p}} + \left( \sum\limits_{k=1}^n |b_k|^p \right)^{\frac{1}{p}}.$$
+\end{corollary}
+\begin{proof}
+    Випадок $p = 1$ очевидний. Нехай $1 < p < \infty$, $q = \dfrac{p}{p-1}$.
+    
+    $$\begin{array}{rcl}
+        \sum\limits_{k=1}^{n} |a_k + b_k|^p
+        & \leqslant & \sum\limits_{k=1}^{n} |a_k| |a_k + b_k|^{p-1} + \sum\limits_{k=1}^{n} |b_k| |a_k + b_k|^{p-1}  \\
+        & \leqslant &
+        \left(
+            \left( \sum\limits_{k=1}^n |a_k|^p \right)^{\frac{1}{p}}
+            + \left( \sum\limits_{k=1}^n |b_k|^p \right)^{\frac{1}{p}}
+        \right) \left( \sum\limits_{k=1}^n |a_k + b_k|^p \right)^{\frac{1}{q}} \\
+    \end{array}$$
+    
+    Отже,
+    $$\left( \sum\limits_{k=1}^n |a_k + b_k|^p \right)^{\frac{1}{p}} \leqslant
+    \left( \sum\limits_{k=1}^n |a_k|^p \right)^{\frac{1}{p}} + \left( \sum\limits_{k=1}^n |b_k|^p \right)^{\frac{1}{p}}.$$
+\end{proof}
+
+
+\begin{theorem}
+    Для кожного $p \in [1, \infty)$
+    $$d_p(x, y) = \left( \sum\limits_{k=1}^{n} |x_k - y_k|^p \right)^{\frac{1}{p}}$$
+    
+    є метрикою на $\mathbb{C}^n$.
+\end{theorem}
+\begin{proof}
+    Нерiвнiсть трикутника випливає з нерiвностi Мiнковського:
+    $$\begin{array}{rcl}
+        d_p(x, z)
+        & = & \left( \sum\limits_{k=1}^{n} |x_k - z_k|^p \right)^{\frac{1}{p}}  \\
+        & = & \left( \sum\limits_{k=1}^{n} |(x_k - y_k) + (y_k - z_k)|^p \right)^{\frac{1}{p}}  \\
+        & \leqslant & \left( \sum\limits_{k=1}^{n} |(x_k - y_k)|^p \right)^{\frac{1}{p}}
+            + \left( \sum\limits_{k=1}^{n} |(y_k - z_k)|^p \right)^{\frac{1}{p}}  \\
+        & = & d_p(x, y) + d_p(y, z)  \\
+    \end{array}$$
+\end{proof}
+
+\begin{example}
+    $X = \mathbb{R}^n$ або $\mathbb{C}^n$, $0 < p < 1$.
+    $$d_p(x, y)
+    = \sum\limits_{k=1}^n |x_k - y_k|^p$$
+    
+    є метрикою на $X$.
+    
+    \begin{proof}
+        $f(x) = 1 + x^p - (1 + x)^p$. При $x > 0$,
+        
+        $$f'(x)
+        = p x^{p-1} - p(1 + x)^{p-1}
+        = p \left(\dfrac{1}{x^{1-p}} - \dfrac{1}{(1+x)^{1-x}} \right)
+        > 0.$$
+        
+        Отже,
+        $$(1 + x)^p \leqslant 1 + x^p;$$
+        $$(a + b)^p \leqslant a^p + b^p;$$
+        $$d_p(x, z) \leqslant d_p(x, y) + d_p(y, z).$$
+    \end{proof}
+\end{example}
+
+\begin{example}
+    $1 \leqslant p \leqslant \infty$, $l_p$ --- простiр всiх
+    послiдовностей $x = (x_1, x_2, ...)$, для яких
+    $\sum\limits_{k=1}^{\infty} |x_k|^p < \infty$.
+    
+    $$d_p(x, y) = \left( \sum\limits_{k=1}^{\infty} |x_k - y_k|^p \right)^{\frac{1}{p}}$$
+    
+    є метрикою на $l_p$.
+\end{example}
+
+\begin{example}
+    $0 < p < 1$, $l_p$ --- простiр всiх послiдовностей $x = (x1, x2, ...)$, для яких
+    $\sum\limits_{k=1}^{\infty} |x_k|^p < \infty$.
+    
+    $$d_p(x, y) = \left( \sum\limits_{k=1}^{\infty} |x_k - y_k|^p \right).$$
+    
+    є метрикою на $l_p$.
+\end{example}
+
+\begin{example}
+    $C[a, b]$ – простiр всiх неперервних функцiй $f: [a, b] \rightarrow \mathbb{R}$.
+    $$d(f, g) = \max\limits_{t \in [a,b]} |f(t) - g(t)|.$$
+    є метрикою на $C[a, b]$.
+\end{example}
+
+\begin{example}
+    $C[a, b]$ --- простiр всiх неперервних функцiй $f: [a, b] \rightarrow \mathbb{R}$.
+    $$d(f, g) = \int\limits_{a}^{b} |f(t) - g(t)| dt.$$
+
+    є метрикою на $C[a, b]$.
+\end{example}
+
+\begin{example}
+    $C_b(\mathbb{R})$ --- простiр всiх неперервних i обмежених функцiй
+    $f: \mathbb{R} \rightarrow \mathbb{R}$.
+    $$d(f, g) = \sup\limits_{t \in \mathbb{R}} |f(t) - g(t)|.$$
+\end{example}
+
+\begin{claim}[Пiдпростiр]
+    Якщо $(X, d)$ --- метричний простiр i $Y \subset X$, то звуження $d$ на
+    $Y \times Y$ є метрикою на $Y$. $Y$ --- пiдпростiр простору $X$.
+\end{claim}
+
+\begin{definition}[Збіжність послідовності до точки]
+    Послiдовнiсть $x_1$, $x_2$, ... точок метричного простору $(X, d)$
+    збiгається до точки $x \in X$, якщо
+    $$\lim\limits_{n \rightarrow \infty} d(x_n, x) = 0.$$
+    
+    Еквiвалентно:
+    $$\forall \varepsilon > 0 \quad
+    \exists N \geqslant 1: \quad
+    \forall n \geqslant N d(x_n, x) <
+    \varepsilon.$$
+\end{definition}
+
+$x = \lim\limits_{n \rightarrow \infty} x_n$ --- границя послiдовностi.
+
+\begin{theorem}
+    Границя збiжної послiдовностi єдина.
+\end{theorem}
+\begin{proof}
+    Нехай $x$ та $y$ --- границi збiжної послiдовностi $(x_n)_{n \geqslant 1}$.
+    Для довiльного $\varepsilon > 0$ iснує $n: d(x_n, x) < \varepsilon/2$, $d(x_n, y) < \varepsilon/2$.
+    Тодi $d(x, y) \leqslant d(x_n, x) + d(x_n, y) < \varepsilon$. $d(x, y) = 0$ i $x = y$.
+\end{proof}
+
+\begin{definition}[Неперервність відображення в точці]   
+    Нехай $(X, d)$, $(Y, \rho)$ --- метричнi простори, $f : X \rightarrow Y$.
+    Вiдображення $f$ неперервне в точцi $x_0 \in X$, якщо для довiльного
+    $\varepsilon > 0$ iснує $\sigma > 0$ таке що
+    $$x \in X, d(x, x_0) < \sigma \Rightarrow \rho(f(x), f(x_0)) < \varepsilon.$$
+    
+    Вiдображення $f$ неперервне, якщо $f$ неперервне в кожнiй точцi $x_0 \in X$.
+\end{definition}
+
+\begin{problem}
+Вiдображення $f: X \rightarrow Y$ неперервне в точцi $x_0 \in X$ тодi i тiльки тодi,
+коли для довiльної послiдовностi $x_1$, $x_2$, ... точок $X$, яка збiгається до $x_0$,
+послiдовнiсть $f(x_1)$, $f(x_2)$, ... збiгається до $f(x_0)$ в $Y$.
+\end{problem}
+
+\begin{definition}[Гомеоморфiзм]
+    Вiдображення $f: X \rightarrow Y$ називається гомеоморфiзмом, якщо
+    $f$ бiєктивне, $f$ та $f^{-1}$ неперервнi.
+\end{definition}
+
+\begin{definition}[Ізометрiя]
+    Вiдображення $f: X \rightarrow Y$ називається iзометрiєю, якщо
+    $$\rho(f(x), f(x')) = d(x, x').$$
+\end{definition}
+
+\begin{problem}
+    Iзометрiя неперервна. Якщо $f$ iзометрiя та бiєкцiя, то $f$ – гомеоморфiзм.
+\end{problem}
+
+\begin{example}
+    Нехай $X = \mathbb{R}$, $d(x, x') = |x - x'|$, $Y = (-1, 1)$ – пiдпростiр $X$.
+    Тодi $f(x) = \dfrac{x}{1+|x|}$ --- гомеоморфiзм мiж $X$ та $Y$.
+\end{example}
+
+\begin{definition}[Відкрита куля]
+    Вiдкритою кулею з центром в точцi $x_0 \in X$ i радiусом $r > 0$ називається
+    множина
+    $$B(x_0, r) = \{x \in X: d(x, x_0) < r\}.$$
+\end{definition}
+
+\begin{definition}[Замкнена куля]
+    Замкненою кулею з центром в точцi $x_0 \in X$ i радiусом $r > 0$ називається
+    множина
+    $$B(x_0, r) = \{x \in X: d(x, x_0) \leqslant r\}.$$
+\end{definition}
+
+\begin{definition}[Сфера]
+    Сферою з центром в точцi $x_0 \in X$ i радiусом $r > 0$ називається множина
+    $$S(x_0, r) = \{x \in X: d(x, x_0) = r\}.$$
+\end{definition}
+
+\begin{definition}[Вiдкрита множина]
+    Множина $G \subset X$ вiдкрита, якщо 
+    $$\forall x \in  G \quad \exists r > 0: B(x, r) \subset G.$$
+\end{definition}
+
+\begin{definition}[Дотична до множини]
+    Точка $x \in X$ дотична до множини $A \subset X$, якщо
+    $$\forall r > 0 \quad B(x, r) \cap A \neq \varnothing.$$
+\end{definition}
+
+\begin{definition}[Замикання]
+    Замикання $\overline{A}$ --- це сукупнiсть всiх дотичних точок множини $A$.
+\end{definition}
+
+\begin{definition}[Замкнена множина]
+    Множина $A$ замкнена, якщо вона мiстить всi свої дотичнi точки, тобто
+    $\overline{A} = A$.
+\end{definition}
+
+
+Теорема
+\begin{itemize}
+    \item $A \subset \overline{A}$
+    \item $A \subset C \Rightarrow \overline{A} \subset \overline{C}.$
+    \item $\overline{A \cup C} = \overline{A} \cup \overline{C}$
+    \item $\overline{\overline{A}} = \overline{A}$
+\end{itemize}
+\begin{proof}
+    (1) Якщо $x \in A$, то $x \in B(x, r) \cap A \neq \varnothing$.
+    Отже, $x \in \overline{A}$.
+    
+    (2) Якщо $A \subset C$ i $x \in A$, то для довiльного $r > 0 B(x, r) \cap A \neq \varnothing$.
+    $$B(x, r) \cap A \subset B(x, r) \cap C \Rightarrow B(x, r) \cap C \neq \varnothing, x \in \overline{C}.$$
+    
+    (3) Включення $A \cup C \subset A \cup C$ випливає з (2).
+    Нехай $x \in A \cup C$. Якщо $x \not\in \overline{A}$,
+    то iснує $r_0 > 0: B(x, r_0) \cap A = \neq$.
+    Для довiльного $r > 0 B(x, \min(r, r_0)) \cap (A \cup C) \neq \varnothing$.
+    Отже, $B(x, \min(r, r_0)) \cap C \neq \varnothing$.
+    $B(x, \min(r, r_0)) \subset B(x, r)$ i $B(x, r) \cap C \neq \varnothing$.
+    З припущень $x \in \overline{A \cup C}, x \not\in \overline{A}$
+    випливає $x \in \overline{C}$. Отже, $\overline{A \cup C} \subset \overline{A} \cup \overline{C}$.
+    
+    (4) Враховуючи (1) достатньо довести, що $\overline{\overline{A}} \subset \overline{A}$.
+    Нехай $x \in \overline{\overline{A}}$ i $r > 0$.
+    Вiдкрита куля $B(x, r)$ мiстить точку $y \in \overline{A}$. Нехай $\varepsilon = r - d(x, y)(> 0)$.
+    Покажемо, що $B(y, \varepsilon) \subset B(x, r)$. Дiйсно, якщо $z \in B(y, \varepsilon)$, то
+    $$d(z, x) \leqslant d(z, y) + d(y, x) < \varepsilon + d(y, x) = r, z \in B(x, r).$$
+
+    Так як $y \in \overline{A}$, то $B(y, \varepsilon) \cap A \neq \varnothing$.
+    Так як $B(y, \varepsilon) \subset B(x, r)$, то
+    $B(x, r) \cap A \neq \varnothing$ i $x \in \overline{A}$.
+\end{proof}
+
+\begin{corollary}
+    Замикання $\overline{A}$ будь-якої множини $A$ замкнене.
+\end{corollary}
+
+\begin{theorem}
+    $x \in \overline{A}$ тодi i тiльки тодi, коли $x$ є границею деякої послiдовностi точок
+    множини $A$.
+\end{theorem}
+\begin{proof}
+    Нехай $x = \lim\limits_{n \rightarrow \infty} x_n, x_1, x_2, ... \in A$.
+    Для довiльного $r > 0$ iснує $n$ таке що $d(x_n, x) < r$.
+    Тобто $x_n \in B(x, r) \cap A \neq \varepsilon$. $x \in \overline{A}$.
+    Навпаки, нехай $x \in \overline{A}$.
+    Для довiльного $n \geqslant 1$ вiдкрита куля $B(x, \frac{1}{n})$ мiстить
+    точку $x_n \in A$. За побудовою, $d(x, x_n) < \frac{1}{n}$.
+    Отже, $x = \lim\limits_{n \rightarrow \infty} x_n$.
+\end{proof}
+
+
+Визначення
+\begin{itemize}
+    \item Множина $A$ щiльна в множинi $B$, якщо $B \subset A$.
+    \item Множина $A$ всюди щiльна, якщо вона щiльна в $X$ (тобто $\overline{A} = X$).
+    \item Простiр $X$ сепарабельний, якщо в ньому iснує злiченна всюди щiльна множина.
+\end{itemize}
+
+Приклади
+\begin{itemize}
+    \item Простiр $\mathbb{R}^n$ сепарабельний вiдносно кожної з метрик $d_p$,
+    $0 < p \leqslant \infty$. В якостi всюди щiльної множини можна взяти множину
+    $\mathbb{Q}^n$ точок з рацiональними координатами.
+    
+    \item Простiр $C[a, b]$ сепарабельний вiдносно метрики
+    $d(f, g) = \max\limits_{t \in [a,b]} |f(t) - g(t)|$.
+    В якостi всюди щiльної множини можна
+    взяти множину многочленiв з рацiональними коефiцiєнтами (теорема
+    Вайєрштрасса).
+    
+    \item $1 \leqslant p < \infty$. Простiр $l_p$ сепарабельний вiдносно метрики
+    $d(x, y) = ( \sum\limits_{n=1}^{\infty} |x_n - y_n|^{p})^{\frac{1}{p}}$.
+    В якостi всюди щiльної множини можна
+    взяти множину послiдовностей з рацiональними компонентами, в яких
+    тiльки скiнченна кiлькiсть компонент не рiвна нулю.
+\end{itemize}
+
+Приклади
+\begin{itemize}
+    \item Незлiченний дискретний простiр не сепарабельний. В дискретному
+    просторi $\overline{A} = A$.
+    
+    \item Простiр $C_b(\mathbb{R})$ не сепарабельний вiдносно метрики
+    $d(f, g) = \sup\limits_{t \in \mathbb{R}} |f(t) - g(t)|$.
+    
+    Для довiльної множини $A \subset \mathbb{Z}$ iснує обмежена неперервна функцiя $f_A$,
+    така що
+    $$f_A(n) = \left\{ \begin{array}{ll}
+        1, & n \in A \\
+        0, & n \not\in A \\
+    \end{array} \right. .$$
+    
+    Якщо $A' \neq A'$, то $d(f_A, f_{A'}) \geqslant 1$. $\{B(f_A, \frac{1}{2})\}_{A \subset \mathbb{Z}}$
+    --- незлiченна сукупнiсть вiдкритих куль, якi попарно не перетинаються.
+\end{itemize}
+
+\begin{definition}[Фундаментальна послiдовнiсть]
+    Послiдовнiсть $(x_n)_{n \geqslant 1}$ точок метричного простору $X$ фундаментальна
+    (послiдовнiсть Кошi), якщо $\lim\limits_{n,m \rightarrow \infty} d(x_n, x_m) = 0$.
+    Тобто, $\forall \varepsilon > 0 \quad \exists N \geqslant 1$:
+    $$n, m \geqslant N \Rightarrow d(x_n, x_m) < \varepsilon.$$
+\end{definition}
+
+\begin{theorem}
+    Збiжна послiдовнiсть фундаментальна.
+\end{theorem}
+\begin{proof}
+    Нехай $x = \lim\limits_{n \rightarrow \infty} x_n$.
+    Для заданого $\varepsilon > 0$ iснує iндекс $N \geqslant 1$,
+    такий що $d(x_n, x) < \frac{\varepsilon}{2}$ при $n \geqslant N$.
+    Тодi для $n, m \geqslant N$ виконується
+    $$d(x_n, x_m) \leqslant d(x_n, x) + d(x_m, x) < \varepsilon.$$
+\end{proof}
+
+
+\begin{definition}[Повний метричний простiр]
+    Метричний простiр --- повний, якщо в ньому будь-яка фундаментальна
+    послiдовнiсть збiгається.
+\end{definition}
+

@@ -1,0 +1,817 @@
+\chapter{Hash functions in cryptography}
+
+\section{Introduction in to cryptographic hash functions}
+
+\begin{definition}[Hash function]
+    Hash function is a relation
+    $$\h: \{0, 1\}^{*} \rightarrow \{0, 1\}^{n}.$$
+\end{definition}
+
+\begin{definition}[Keyed hash function]
+    a keyed hash function is a relation
+    $$\h_k: \mathcal{K} \times \{0, 1\}^{*} \rightarrow \{0, 1\}^{n},$$
+    where $\mathcal{K}$ is a set of parameters (keys).
+\end{definition}
+
+% \begin{definition}[One-way hash function]
+%     One-way hash function is a hash function that is hard to reverse.
+% \end{definition}
+
+\begin{remark}
+    Hash functions can have any string as input, but the output is of fixed size.
+\end{remark}
+
+\begin{definition}[Message Authentication Code (MAC)]
+    Message Authentication Code (MAC or MAC-code) is a keyed hash function
+    with a secret key.
+\end{definition}
+
+\begin{definition}[Salt]
+    if the key in a keyed hash function is public, then the key is a salt.
+\end{definition}
+
+Hash functions properties:
+\begin{enumerate}[noitemsep]
+    \item \textbf{Output size.}
+        size of output of the function that is always fixed.
+    \item \textbf{Speed. (kilobytes/second)}
+        Number of kilobytes processed by hash function at a second.
+    \item \textbf{Uniform distribution.}
+        All outputs of a hash function are uniformly distributed.
+    \item \textbf{Avalanche effect.}
+        The slightest change in the input of a hash function leads
+        to unpredictable changes in output
+    \item \textbf{Simplicity and Compactness.}
+        Simple and small implementation.
+    \item \textbf{Preimage-resistance.}
+        For essentially all pre-specified outputs,
+        it is computationally infeasible to find any input which hashes to that output,
+        i.e., to find any preimage $x'$ such that $\h(x') = y$ when given any $y$ for which
+        a corresponding input is not known.
+    \item \textbf{2nd-preimage resistance.}
+        It is computationally infeasible to find any second
+        input which has the same output as any specified input, i.e., given $x$, to find
+        a 2nd-preimage $x' \neq x$ such that $\h(x) = h(x')$.
+    \item \textbf{Collision resistance.}
+        It is computationally infeasible to find any two distinct
+        inputs $x$, $x'$ which hash to the same output, i.e., such that $\h(x) = \h(x')$.
+\end{enumerate}
+
+\begin{definition}[Negligible function]
+    In mathematics, a negligible function is a function  $\mu: \mathbb{N} \rightarrow \mathbb{R}$
+    such that for every positive integer $c$ there exists an integer $N_c$ such that for all $x > N_c$,
+    $|\mu (x)| < \frac {1}{x^{c}}.$
+    
+    Equivalently, we may also use the following definition. A function 
+    $\mu :\mathbb {N} \to \mathbb {R}$ is negligible, if for every positive
+    polynomial $poly(\cdot)$ there exists an integer $N_{poly} > 0$ such that
+    for all $x > N_{poly}$
+    $|\mu (x)|<{\frac {1}{\operatorname {poly} (x)}}.$
+\end{definition}
+
+For the last three properties, there is more formal description.
+Let $\mu(x)$ be a negligible function. Then:
+\begin{enumerate}[noitemsep]
+    \item \textbf{Preimage-resistance.}
+        Let have an adversary
+        $A_1: \{0, 1\}^{n} \rightarrow \{0, 1\}^{\leqslant l(n)},$
+        limited with time $T$. Then:
+        $$P_{X, A_1}\{\h(A_1(\h(x))) = \h(x)\} \leqslant \mu(n).$$
+    \item \textbf{2nd-preimage resistance.}
+        Let have an adversary
+        $A_2: \{0, 1\}^{\leqslant l(n)} \rightarrow \{0, 1\}^{\leqslant l(n)},$
+        limited with time $T$. Then:
+        $$P_{X, A_2}\{\h(A_2(x)) = \h(x)\} \leqslant \mu(n).$$
+    \item \textbf{Collision resistance.}
+        Let have an adversary
+        $A_3: \mathcal{K} \rightarrow \{0, 1\}^{\leqslant l(n)} \times \{0, 1\}^{\leqslant l(n)} \cup \bot,$
+        limited with time $T$. Then:
+        $$P_{\mathcal{K}, A_3}\{A_3(k) \neq \bot\} \leqslant \mu(n).$$
+\end{enumerate}
+
+\begin{lemma}[Damgor]
+    Collision resistance implies 2nd-preimage resistance of hash functions
+\end{lemma}
+
+\begin{remark}
+    Collision resistance does not guarantee preimage resistance
+\end{remark}
+
+\section{Standard attacks}
+
+The ideal hash function $h: \mu \rightarrow X$, $|X| = N$, ($N = 2^{n}$)
+is indistinguishable from a random relation.
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Random preimage search. \ref{alg:Random_preimage_search}}
+        \begin{algorithm2e}[ht]
+            \caption{Random preimage search}
+            \label{alg:Random_preimage_search}
+            
+            \KwInput{Hash value $h$ or $x'$, (where $h = \h(x')$).}
+            \KwOutput{Preimage of $h$.}
+
+            \While{$True$}{
+                Generate random $x \in_{R} \mu$\;
+                \If{$\h(x) = h$}{
+                    \Return $x$\;
+                }
+            }
+        \end{algorithm2e}
+        \begin{lemma}
+            Let $X$ ($|X| = N$) be a set, $x \in X$ is fixed element,
+            $X_1 \subseteq_{R} X$, $|X_1| = r$. Then,
+            $$P\{x \in X_1\} \geqslant 1 - e^{- \frac{r}{N}}.$$
+        \end{lemma}
+        \begin{corollary}
+            For the probability $p$ of success,
+            it is necessary to have the power of $X_1$: $r = N \ln(\frac{1}{1-p})$.
+        \end{corollary}
+
+    \item \textbf{Random search of a collision. (Birthday attack.) \ref{alg:Birthday_attack}}
+        \begin{algorithm2e}[ht]
+            \caption{Random search of a collision}
+            \label{alg:Birthday_attack}
+            
+            % \KwInput{Hash value $h$ or $x'$, (where $h = \h(x')$)}
+            \KwOutput{Collision.}
+
+            \For{$i \leftarrow 1$ \KwTo $t^{\infty}$}{
+                Generate random $x \in_{R} \mu$\;
+                \If{$\h(x_i) = \h(x_j), j = \overline{1, i-1}$}{
+                    \Return $(x_i, x_j)$\;
+                }
+            }
+
+            \Return $\bot$\;
+        \end{algorithm2e}
+        \begin{lemma}
+            Let $X$ ($|X| = N$) be a set.
+            Let $X_1 \subseteq_{R} X$ random sample with return, $|X_1| = r$. Then,
+            $$P\{X_1 \text{ has a collision}\} \geqslant 1 - e^{- \frac{r^2}{2N}}.$$
+        \end{lemma}
+        \begin{remark}
+            It is a common practice to write $P \approx 1 - e^{- \frac{r^2}{2N}}$.
+        \end{remark}
+        \begin{corollary}
+            For the probability of success $p$,
+            it is necessary to have $r \approx \sqrt{2N \ln(\frac{1}{1-p})}$.
+        \end{corollary}
+
+    \item \textbf{Random search of a collision. (Yuval attack.) \ref{alg:Yuval_attack}}
+        \begin{algorithm2e}[ht]
+            \caption{Random search of a collision}
+            \label{alg:Yuval_attack}
+            
+            % \KwInput{Hash value $h$ or $x'$, (where $h = \h(x')$)}
+            \KwOutput{Collision.}
+
+            Generate $r_1$ messages $\{x_i\}$\;
+            Generate $r_2$ messages $\{y_j\}$\;
+            Search for a collision $(x_i, y_j): \h(x_i) = \h(y_j) \vee x_i \neq x_j$;
+
+            \Return $(x_i, y_j) \vee \bot$\;
+        \end{algorithm2e}
+        \begin{lemma}[Yuval]
+            Let $X$ ($|X| = N$) be a set.
+            Let $X_1, X_2 \subseteq_{R} X$ random samples with return,
+            $|X_1| = r_1$, $|X_2| = r_2$. Then,
+            $$P\{X_1 \cap x_2 \neq \varnothing\} \geqslant 1 - e^{- \frac{r_1 r_2}{N}}.$$
+        \end{lemma}
+        \begin{corollary}
+            For the probability of success $p$, and generated first sample $X_1$,
+            it is necessary to have $r_2 \approx \sqrt{\frac{N}{r_1} \ln(\frac{1}{1-p})}$.
+        \end{corollary}
+        \begin{remark}
+            In case of $r_1 = 1$, we have a random preimage search.
+        \end{remark}
+        \begin{corollary}
+            If $r_1 = r_2 = \beta \sqrt{N}$ we have a probability $p(\beta) = 1 - e^{- \beta^2}$.
+        \end{corollary}
+\end{enumerate}
+
+\section{General iterative hash function. Construction of Merkle Damgard}
+
+Let $m$ be a size of one block of the input message,
+$w$ be a size of the hashing state,
+$n$ be a size of the output.
+
+The general iterative hash function construction can be described
+in algorithm \ref{alg:General_Merkle_Damgard_construction}
+
+\begin{algorithm2e}[ht]
+    \caption{General Merkle Damgard construction}
+    \label{alg:General_Merkle_Damgard_construction}
+    
+    \KwInput{$x$, $|x| \leqslant poly(n)$.}
+    \KwOutput{$\h(x)$, $|\h(x)| = n$.}
+
+    $\Tilde{x} = x || \pad(x)$ such that $m \mid |\Tilde{x}|$\;
+    $\Tilde{x} = x_1 || x_2 || ... || x_t, \quad |x_i| = m$\;
+    \tcc{Here $IV$ is an initialisation vector (fixed constant)}
+    $H_0 = IV$\;
+    \For{$i \leftarrow 1$ \KwTo $t$}{
+        $H_i = f(H_{i-1}, x_i)$\;
+    }
+
+    \Return $g(H_t)$\;
+\end{algorithm2e}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.4\linewidth]{example-image-a}
+    \caption{General Merkle Damgard construction}
+    \label{fig:General_Merkle_Damgard_construction}
+\end{figure}
+
+\begin{remark}
+    Sometimes it is useful to write $\h(IV, x)$ to see a relation to the
+    initialisation vector.
+\end{remark}
+
+\section{Classical Merkle Damgard construction}
+
+let $w = n$, $g(x) = x$ ($\h(x) = H_t$).
+
+\begin{attack}[Attack: Collision with a free prefix]
+    Find different $(IV, x)$ and $(IV', x')$ such that $\h(IV, x) = \h(IV', x')$.
+
+    $\h(Iv, x || \pad(x) || y) = \h(H, y)$ -- collision with a free prefix.
+\end{attack}
+
+\begin{solution}[Padding requirements to prevent attack]
+    Paddings must meet Belare conditions.
+    \begin{enumerate}[noitemsep]
+        \item $x$ is a prefix of a $\Tilde{x}$. (padding appends at the end).
+        \item $|x| = |y| \Rightarrow |\pad(x)| = |\pad(y)|$.
+        \item $|x| \neq |y| \Rightarrow $ last blocks of $\pad(x)$ and $\pad(y)$
+            must be different.
+    \end{enumerate}
+\end{solution}
+
+\begin{definition}[MD-padding]
+    MD-padding is $\pad(x) = 10...0||\langle length(x) \rangle$.
+    Where the first ``1'' is necessity and ``0'' are appended after ``1'' to
+    fill the block, so length can fill the whole one.
+\end{definition}
+
+MD-construction strengthening:
+\begin{enumerate}[noitemsep]
+    \item \textbf{MD-strengthening}: use MD-padding.
+    \item \textbf{3C-strengthening}: append to the message block
+        $x_{t+1} = \mu(H_1 \oplus H_2 \oplus ... \oplus H_t)$,
+        $\mu: V_w \rightarrow V_m$.
+    \item \textbf{``ГОСТ''-strengthening}: $x_{t+1} = (x_1 + x_2 + ... + x_t) \mod 2^m$.
+        using in ``ГОСТ 34.11-95'' and in a ``Стрибог''.
+        \begin{remark}[2007]
+            Gmuravaran and Kelli showed that linear sums aren't helpful.
+        \end{remark}
+\end{enumerate}
+
+\begin{theorem}[Theorem about security of MD-hashes by Damgar, Merkle]\label{theo:MD_hashes_security}
+    Let $\h$ is a hash function that is a Merkle Damgard construction
+    $(g(x) = x)$ with MD-strenthening.
+
+    If $f$ is collision resistant, than $\h$ is collision resistant.
+\end{theorem}
+\begin{proof}
+    Let exists efective algorithm of collision search for $\h$, $x \neq y$,
+    $\h(x) = \h(y)$. Then:
+    $$\Tilde{x} = x_1 || x_2 || ... || x_t, \Tilde{y} = y_1 || y_2 || ... || y_t.$$
+    $$H_t = H_s' \Rightarrow f(H_{t-1}, x_t) = f(H_{s-1}, y _s) \Rightarrow$$
+    There is a collision  or $H_{t-1} = H(s-1)$ and $x_t = y_s \Rightarrow t = s$
+    (because the last block is an encoded length).
+    $\Rightarrow f(H_{t-2}, x_{t-1}) = f(H_{t-2}', y_{t-1}) \Rightarrow$
+    Or there is a collision or all inputs are the same.
+    $$x \neq y, t = s \Rightarrow \exists i: \quad x_i \neq y_i$$
+    Where inputs are different, so the assumption is wrong.
+\end{proof}
+
+\begin{remark}
+    \begin{enumerate}
+        \item Theorem \ref{theo:MD_hashes_security} creates a sufficient but not
+            necessary condition. There exists examples of collision resistant
+            hash functions $\h$ but not collision resistant functions $f$.
+        \item Instead of MD-strengthening, it is possible to use Belare conditions
+            for paddings
+    \end{enumerate}
+\end{remark}
+
+\begin{theorem}[Lai, Messi]
+    Let $\h$ be an iterative hash function with MD-strengthening.
+    Let number of messages with more than $2x$ blocks is not limited.
+    If for almost everyone vector $H \in V_n$ such that $(H', M'): f(H', M') = H$
+    requires $2^s$ operations, then exists attack on second preimage for $\h$ with
+    complexity $2 \cdot 2^{\frac{m + s}{2}}$
+\end{theorem}
+\begin{proof}
+    Let $x$ be a given text. Then exists $y_1$ and $y_2$ such that:
+    $$\h(x) = \h(x_1 || x_2 || x_3 || ...) = \h(y_1 || y_2 || x_3 || ...).$$
+    1) For $2^{\frac{m + s}{2}}$ random $y_1 \in V_m$ compute $G_1 = f(H_0, y_1)$.
+    2) For $2^{\frac{m - s}{2}}$ random $G_1'\in V_w$ search preimage
+        $y_2: f(G', y_2) = H_2$.
+    3) By the lemma of Yuval, $\exists G_1 = G_1'$ with probability
+        $p(1) = 1 - e^{-1} \approx 0.63$. (more than $\frac{1}{2}, what is good$).
+        (search of random vectors isn't hard, because of the model assumptions).
+\end{proof}
+
+\begin{remark}
+    We proved: if $f$ is first preimage search resistant, then $\h$ isn't resistant.
+    We didn't prove: if $f$ resistant, then $\h$ isn't resistant. 
+\end{remark}
+
+It was proved that MD-construction does not save property of first preimage search
+resistance.
+
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{c|c}
+        Pre & Preimage search resistance \\
+        Sec & Second preimage search resistance \\
+        Coll & Collision resistance \\
+    \end{tabular}
+    \caption{Hash function properties.}
+    \label{tab:my_label}
+\end{table}
+
+
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{c|c|c}
+        Attack & probability & range \\ \hline\hline
+        Pre   & $p \geqslant 1 - e^{-\frac{r}{N}}$ & $r \approx N \ln(\frac{1}{1 - p})$\\
+        Coll  & $p \geqslant 1 - e^{-\frac{r^2}{2N}}$ & $r \approx \sqrt{2 N \ln(\frac{1}{1 - p})}$\\
+        Yuval & $p \geqslant 1 - e^{-\frac{r_1 r_2}{N}}$ & $r \approx \frac{n}{r_1} \ln(\frac{1}{1 - p})$
+    \end{tabular}
+    \caption{Reference: attacks on a cryptographic hash functions}
+    \label{tab:reference_attacks}
+\end{table}
+
+\section{Approaches for building compressive reflections}
+\begin{enumerate}[noitemsep]
+    \item With a use of block ciphers.
+    \item With a use of stream ciphers.
+    \item With a use of arithmetic, algebraic or other operations (arithmetic hashing,
+        modular hashing), usage of RSA and DSA as a black box (MESH-1, MESH-2).
+    \item based on NP-hard problems.
+    \item other exotics (game of life, dynamic chaos, neuron links).
+\end{enumerate}
+
+\subsubsection*{building compressive reflections based on block ciphers}
+
+1987: the first hash function (Rabin): $f(H, x) = DES_x(H)$. It is bad.
+
+There are better candidates.
+\begin{remark}
+    Those functions are considered as hard reversible functions, but there is no
+    proof of it. It isn't clear what requirements we need for a cipher $E$ to
+    consider function $f$ as a good function.
+\end{remark}
+
+\begin{enumerate}[noitemsep]
+    \item Matesh-Meer-Osis function (1985): $f(H, x) = E_{K(H)}(x) \oplus x$.
+    \item Devis-Meer function (1984): $f(H, x) = E_{K(H)}(H) \oplus H$.
+    \item Matesh-Meer-Osis function (1989): $f(H, x) = E_{K(H)}(x) \oplus H \oplus x$.
+    \item Prenel, Govaerts, Vandervalle (1993):
+        $f(H, x) = E_A(B) \oplus C, \quad A, B, C \in \{const, H, x, H \oplus x\}$.
+        There are 64 compressive functions (PGV functions), but only 12 are resistant
+        to appropriate attacks. Among those, there are 8, with non-movable points.
+        Also, those functions can be divided on two equality classes, divided by
+        functions MMO and MP.
+    \item Black, Rogevai, Shrineton (2002): if $E$ is ideal oracul, then 12 functions
+        of PGV are reliable.
+    \item Black (2005): There is a way to make any PGV function unreliable.
+\end{enumerate}
+Here, $K(x)$ returns key from a vector.
+
+\subsubsection*{pipe constructions}
+
+\begin{definition}[Wide-pipe construction]
+    By Stefan Luks (2004). Idea: make $w \geqslant 2n$. Then:
+    \begin{enumerate}
+        \item Etalon preimage search complexity $h = O(2^n)$.
+        \item Etalon collision search complexity $f = O(2^{\frac{w}{1}}) = O(2^n)$.
+    \end{enumerate}
+    So attack of long messages is ineffective.
+\end{definition}
+
+\begin{definition}[Narrow-pipe construction]
+    If $w = n$ we have narrow-pipe.
+\end{definition}
+
+\begin{definition}[Fast-pipe construction]
+    Fast-pipe construction (2010). Idea: usage of tweak.
+    $f$ is a classical function $f: V_w \times V_m \rightarrow V_w$, with usage of tweak.
+    $$\varphi: V_w \times V_m \times \{0, 1\} \rightarrow V_w$$
+    $$f(H, x) = (\varphi(H, x, 0), \varphi(H, x, 1))$$
+\end{definition}
+
+\section{Randomised hashing}
+
+RMX scheme, 2006, Halevi, Kravchek.
+
+\begin{algorithm2e}[ht]
+    \caption{Randomised hashing}
+    % \label{alg:default}
+    
+    \KwInput{Some message $x$.}
+    \KwOutput{hash of message $x$, $\h(x)$, and random salt used in the algorithm.}
+
+    Generate random salt $r \in_{R} V_m$\;
+    $\Tilde{x} := r || x || \pad(x), \quad \Tilde{x} \rightarrow x_1 || x_2 || ... || x_t$\;
+    $H_0 := IV$\;
+    \For{$i \leftarrow 1$ \KwTo $t$}{
+        $H_i = f(H_{i-1}, x_i \oplus r)$\;
+    }
+    
+    \Return $(r, g(H_t))$\;
+\end{algorithm2e}
+
+\begin{remark}
+    Any hash function transforms in randomised, without change in the algorithm.
+    All manipulations are made on the input message. 
+\end{remark}
+
+\section{HAsh Iterated FrAmework (HAIFA)}
+
+\begin{definition}[HAsh Iterated FrAmework (HAIFA)]
+    By Bikam Dankelman (2006).
+    \begin{enumerate}
+        \item \textbf{compressive function.}:
+            $$H_i = f(H_{i-1}, x_i, s, l_i),$$
+            where $s$ is randomised salt (if there is no need, then $s=0$),
+            $l_i$ is a length of possessed data, (with $x_i$, but without padding).
+            $l_i = 0$ is service block (additional data, isn't a block of message
+        \item \textbf{Initialisation state.}
+            $$D_i = \langle n \rangle || 0 ... 0.$$
+            $$H_0 = f(IV, D, 0, 0),$$
+            that depends on $n$ (can be precalculated).
+        \item \textbf{Padding.} $\pad(x) = 10...0||\langle length(x) \rangle || \langle n \rangle$.
+        \item \textbf{Final transformation.} $g(H_t) = \mathrm{trunc}_n(H_t)$, because there is
+            a recommendation to use wide-pipe ($w \geqslant 2n$).
+    \end{enumerate}
+\end{definition}
+
+\section{Other hash functions}
+
+\begin{enumerate}
+    \item BLAKE
+    \item Skein
+    \item Grostle
+    \item ``Купина''
+    \item Sponge construction
+\end{enumerate}
+
+\section{Parametrised hash functions}
+
+Have $\h: \{0, 1\}^{\leqslant l(n)}  \times \mathcal{K} \rightarrow \{0, 1\}^n$,
+where $k \in \mathcal{K}$ is an open parameter (salt, vinegar, garlic, etc.).
+
+Cryptographical properties:
+\begin{enumerate}
+    \item \textbf{Collision resistance (Coll).} ...
+    \item \textbf{Preimage resistance (Pre).} $y = \h(x)$ and $\mathcal{K}$ are not
+        dependent on analytic.
+        \begin{itemize}
+            \item[+] \textbf{Always Pre (aPre).} $k$ is chosen randomly by analytic.
+            \item[+] \textbf{Everywhere Pre (ePre).} $y$ is chosen by analytic and $k$
+                is chosen randomly by analytic.
+        \end{itemize}
+    \item \textbf{Second preimage resistance (Sec).} $x$ and $k$ are chosen randomly
+        by analytic.
+        \begin{itemize}
+            \item[+] \textbf{Always Sec (aSec).} $k$ is chosen by analytic, $x$ is random.
+            \item[+] \textbf{Everywhere Sec (eSec).} $x$ is chosen by analytic, $k$ is random.
+        \end{itemize}
+\end{enumerate}
+
+\begin{remark}
+    For non parametrised hash functions properties ePre, eSec has no meaning.
+    For more, aPre and aSec are the same as Pre and Sec correspondent.
+\end{remark}
+
+\begin{algorithm2e}[ht]
+    \caption{General algorithm for iterative parametrised hash functions}
+    % \label{alg:default}
+    
+    \KwInput{Some message $x$ and key $k$.}
+    \KwOutput{hash of message $x$, $\h(x)$, and random salt used in the algorithm.}
+
+    $\Tilde{x} := x || \pad(x) \rightarrow x_1 || x_2 || ... || x_t$\;
+    $H_0 := IV(k)$\;
+    \For{$i \leftarrow 1$ \KwTo $t$}{
+        $H_i = f_k(H_{i-1}, x_i \oplus r)$\;
+    }
+    
+    \Return $g_k(H_t)$\;
+\end{algorithm2e}
+
+Parametrised hashing constructions
+
+\begin{enumerate}
+    \item \textbf{Classic scheme.} $f \rightarrow f_k$. (Coll, ePre)
+        $$H_0 = IV,$$
+        $$H_i = f_k(H_{i-1}, x_i), \quad i = \overline{1, t},$$
+        $$\h_k(x) = g(H_t).$$
+    \item \textbf{Enveloped MD.} (Coll, ePre, PRO(pseudo random oracle))
+        $$H_0 = IV_1,$$
+        $$H_i = f_k(H_{i-1}, x_i), \quad i = \overline{1, t-1},$$
+        $$\h_k(x) = H_t = f_k(IV_2, H_{t-1} || x_t).$$
+    \item \textbf{Linear Hash.} Use $t$ different independent keys $k_i$,
+        $i = \overline{1, t}$. (ePre, PRO).
+        $$H_0 = IV,$$
+        $$H_i = f_{k_i}(H_{i-1}, x_i), \quad i = \overline{1, t},$$
+        $$\h_k(x) = g(H_t).$$
+    \item \textbf{XOR Linear Hash.} Use $t+1$ different independent keys $k_i$,
+        $i = \overline{0, t}$. (Coll, ePre, eSec).
+        $$H_0 = IV,$$
+        $$H_i = f_{k_0}(H_{i-1} \oplus k_i, x_i), \quad i = \overline{1, t-1},$$
+        $$\h_k(x) = g(H_t).$$
+    \item \textbf{Victor Shoup constructions.} Use $\lceil \log_2(t) \rceil + 1$ different independent
+        keys. (Coll, ePre, eSec)
+        Let $\mu(i) = \mu_i$ be a max degree of $2$, that divides $i$.
+        ($\mu(1) = 0$, $\mu(2) = 1$, $\mu(3) = 0$, $\mu(4) = 2$,
+        $\mu(5) = 0$, $\mu(6) = 1$, $\mu(7) = 0$, $\mu(8) = 3$)
+        $$H_0 = IV,$$
+        $$H_i = f_k(H_{i-1} \oplus k_{\mu(i)}, x_i), \quad i = \overline{1, t},$$
+        $$\h_k(x) = g(H_t).$$
+    \item \textbf{ROX construction.} Random Oracle XOR.
+        (Coll, ePre, aPre, Pre, eSec, aSec, Sec, but PRO).
+        Let $\mathcal{K} = V_k$, $l_k$ is a length of the key $k$,
+        $l_k \leqslant |x| \leqslant c^{L}$. Use oracles
+        $RO_1: V_{l_k} \times V_{l_k} \times V_{\lceil\log_2(L)\rceil} \rightarrow V_w$,
+        $RO_2: V_{l_k} \times V_{L} \times V_{\lceil\log_2(L)\rceil} \rightarrow V_{2w}$.
+        (in practice, $RO_1$ and $RO_2$ can be build on a one oracule with different input parameters).
+        \begin{enumerate}
+            \item Padding function:
+                $\mathrm{roxpad}(x) = \mathrm{trunc}(RO_2(ae, |x|, 1) || RO_2(ae, |x|, 2) || ...)$,
+                where $ae$ are $l_k$ first bits of a message x, $|x|$ is a length encoded in $l_k$ bits.
+            \item Hash computation.
+                $$\Tilde{x} = x || \mathrm{roxpad}(x) \rightarrow x_1 || x_2 || ... || x_t.$$
+                $$r_i = RO_1(k, ae, i), \quad i = \overline{1, \lfloor\log_2(t)\rfloor}.$$
+                $$H_0 = IV,$$
+                $$H_i = f_k(H_{i-1} \oplus r_{\mu(i)}. x_i),$$
+                $$\h_k(x) = H_t.$$
+        \end{enumerate}
+        
+\end{enumerate}
+
+\section{Message authentication code (MAC)}
+
+Message authentication code, mock insertion.
+The aim of mac codes is to chech the authenticity of a message
+$mac_k: \{0, 1\}^{\leqslant l(n)} \times \mathcal{K} \rightarrow \{0, 1\}^{n}$,
+where $k$ is secret.
+
+Cryptographic properties of MAC-codes:
+\begin{enumerate}
+    \item \textbf{Traditional.} Coll, Pre, ePre, Sec, eSec. (aPre and aSec has no sense,
+        because $k$ is a secret key and can't be chosen).
+    \item \textbf{Key recovery resistance.} Attack is to find a key $k$ or a part of a key
+        by a given set $\{(X_1, mac_k(X_i)) | i = \overline{1, q}\}$.
+    \item \textbf{Forgery resistance.} attack is to find $mac_k(x)$ for a message $X \not in \{X_i\}$,
+        by a given set $\{(X_1, mac_k(X_i)) | i = \overline{1, q}\}$.
+        \begin{enumerate}
+            \item \textbf{Existential forgery.} Analytic can't control the value $X$.
+            \item \textbf{Selective forgery.} Analytic can choose the value of $X$.
+        \end{enumerate}
+\end{enumerate}
+
+\begin{definition}[$(\varepsilon, T, q, q', q'', l)$ - stability]
+    By Belare, Kilian, Rogevey, $(\varepsilon, T, q, q', q'', l)$ - stability means,
+    That the adversary $A$ restricted by time $T$, having messages of length
+    $\leqslant l$ and can get:
+    \begin{enumerate}[noitemsep]
+        \item get $q$ random pairs $(X, mac_k(X))$.
+        \item get $q'$ pairs $(X', mac_k(X'))$ with chosen $X'$.
+        \item Check correctness of $q''$ pairs $(X'', M'')$. The pair is correct,
+            if $M'' = mac_k(X'')$, that $A$ forms for himself.
+            ($q''$ can be given by asymptotic $O(\cdot)$. That is proved that
+            the change isn't affecting the stability)
+        \item $A$ will succeed with probability $\leqslant \varepsilon$.
+    \end{enumerate}
+\end{definition}
+
+\begin{remark}
+    General iterative MAC code structure is the same as the structure of
+    general parametrial hash function.
+\end{remark}
+
+\begin{remark}
+    Absence of non-trivial final transformation is criminal
+    (whatever it means, because it must be present).
+\end{remark}
+
+\begin{definition}[Outer collision]
+    An outer collision is a collision $(x, x')$, $x \neq x'$, $mac_k(x) = mac_k(x')$.
+\end{definition}
+
+\begin{definition}[Inner collision]
+    An inner collision is a collision $(x, x')$, $x \neq x'$, $H_t = H_t'$.
+\end{definition}
+
+\section{Zhu multicollisions}
+
+\begin{definition}[$k$-multicollision]
+    $k$-multicollision is a set $\{X_1, X_2, ..., X_k\}$ such that:
+    \begin{equation*}
+        \h(X_1) = \h(X_2) = ... = \h(X_k).
+    \end{equation*}
+\end{definition}
+
+Intuitive expected complexity: collision $(X_1, X_2)$ for $O(2^{\frac{n}{2}})$,
+and $X_3, ..., X_k$ as preimages for $O(2^n)$, so general complexity is $O(k 2^n)$
+
+The idea of Zhu: Let $J_s : V_w \rightarrow V_m \times V_n$, $J_f(H) = (x, y)$,
+$x \neq y$, but $f(H, x) = f(H, y)$.
+
+\begin{theorem}
+    $2^t$ multicollision for iterative hash function $\h$ based on MD construction
+    with calls of $J_f$.
+\end{theorem}
+
+\begin{algorithm2e}[ht]
+    \caption{Build $2^t$ multicollision}
+    \label{alg:build_multicollision}
+    
+    % \KwInput{Some message $x$ and key $k$.}
+    % \KwOutput{hash of message $x$, $\h(x)$, and random salt used in the algorithm.}
+
+    $H_0 := IV$\;
+    \For{$i \leftarrow 0$ \KwTo $t - 1$}{
+        $(M_0^{(i)}, M_1^{(i)}) := J_f(H)$\;
+        $H = f(H, M_0^{(i)})$\;
+    }
+    
+    \Return $g_k(H_t)$\;
+\end{algorithm2e}
+
+\begin{remark}
+    Complexity of algorithm \ref{alg:build_multicollision} with use of birthday attack
+    is $O(t 2^{\frac{m}{2}}$, where $t$ is complexity of oracle.
+\end{remark}
+
+\section{Attacks on a concatenational hash function}
+
+Let $\h_1$, $\h_2$ be two hash functions with outputs $n_1$ and $n_2$, $n_1 \leqslant n_2$.
+let $\h(x) = \h_1(x) || \h_2(x)$, (for example $MD5 || SHA1$).
+
+Intuitive expected collision search complexity: $\approx 2^{\frac{n_1 + n_2}{2}}$.
+
+With idea of Zhu:
+\begin{enumerate}
+    \item Build $2^{\frac{n_1}{2}}$ multicollisions Zou for $\h_1$
+        (with use of birthday attack, $O(\frac{n_2}{2} 2^{\frac{n_1}{2}})$)
+    \item With a big probability collision for $\h_2$ will be found.
+\end{enumerate}
+General complexity: $n_2 2^{\frac{n_1}{2} - 1} + 2^{\frac{n_2}{2}}$.
+
+\section{Attack of long messages}
+
+\begin{enumerate}
+    \item Attack of Winternitz \ref{alg:attack_of_Winternitz}. (Complexity:$(t+\frac{2^n}{t})$)
+        The minimum complexity is at $t = 2^{\frac{n}{2}}$.
+        If $t > 2^{\frac{n}{2}}$ complexity rises.
+
+        \begin{algorithm2e}[ht]
+            \caption{Build $2^t$ multicollision}
+            \label{alg:attack_of_Winternitz}
+            
+            % \KwInput{Some message $x$ and key $k$.}
+            % \KwOutput{hash of message $x$, $\h(x)$, and random salt used in the algorithm.}
+        
+            Compute all states $\{H_i\}$, $i = \overline{0, t}$\;
+            Generate $\frac{2^n}{t}$ random blocks and compute $H^* = f(H_0, y)$\;
+            Has a collision $H^* = H$ with probability $p(1) \approx 0.63$ (Yuval)\;
+            Has second preimage $y || X_{i+1} || X_{i+2} || ... || X_{t}$
+            \For{$i \leftarrow 0$ \KwTo $t - 1$}{
+                $(M_0^{(i)}, M_1^{(i)}) := J_f(H)$\;
+                $H = f(H, M_0^{(i)})$\;
+            }
+            
+            \Return $g_k(H_t)$\;
+        \end{algorithm2e}
+    \item Din attack.
+    \item Kelsey Schnaer attack.
+\end{enumerate}
+
+\begin{theorem}[Prenell van Oorshat]
+    For itarative MAC code, inner collision can be found with $q = O(2^{\frac{w}{2}})$
+    known texts and with $q'$ chosen texts, where:
+    $$q' = \left\{ \begin{array}{cc}
+        0               & \text{if $g_k$ is a biection.} \\
+        O(2^{w - n})    & \text{else} \\
+    \end{array} \right.$$
+\end{theorem}
+
+Approaches for Mac codes construction:
+\begin{enumerate}
+    \item Based on general iterative construction.
+    \item Based on hash functions.
+    \item Based on special mode of block ciphers or stream ciphers.
+    \item Based on a universal hash function.
+\end{enumerate}
+
+\section{MAC codes based on hash functions}
+
+\begin{remark}
+    Let $\h$ be a hash function, available as oracle.
+\end{remark}
+
+\begin{definition}[Tsudik's scheme]
+    \begin{enumerate}
+        \item Prefix scheme: $mac_k(x) = \h(\hat{k} || x)$, $\hat{k}$ is a key
+            padded to full block or blocks.
+        \item Suffix scheme: $mac_k(x) = \h(x || k)$.
+        \item Enveloped scheme: $mac_{k_1, k_2}(x) = \h(\hat{k_1} || x || k_2)$
+            or $mac_{k}(x) = \h(\hat{k} || x || k)$.
+    \end{enumerate}
+\end{definition}
+
+\begin{remark}
+    \begin{enumerate}
+        \item If prefix scheme is based on classical MD construction, then
+            there might be appliable ``length extension attack''.
+            Final transformation make it attack more hard to implement.
+            For a Sponge attack, don't work at all (authors recommend that construction).
+        \item Suffix scheme is bad (no choice).
+        \item There is also attack on the third, enveloped construction.
+    \end{enumerate}
+\end{remark}
+
+\begin{remark}
+    Creators of Grostl recommend the enveloped scheme (They have final transformation $g$).
+\end{remark}
+
+\begin{definition}[HMAC by Belare, Capelli, Krawezyk]
+    $$HMAC_{k_1, k_2}(x) = \h(\hat{k}_2 || \h(\hat{k}_1 || x)).$$
+    $$HMAC_{k}(x) = \h(k \oplus opad || \h(k \oplus ipad || x)).$$
+\end{definition}
+
+\begin{remark}
+    Extension attack and Prenel-Van-Oorshott are not working.
+\end{remark}
+
+\begin{remark}
+    HMAC vs EnvelopeMD. EMD use f instead of h in final transform, so EMD is faster. HMAC use h as oracle, so has simpler implementation. 
+\end{remark}
+
+\begin{theorem}[$HMAK_{k_1, k_2}$ resilience]
+    If $h$ is collision resistant hash function and $H_K(x) := h(k||x)$ is forgery resilient MAC-code with fixed size $|x| = n$, then $HMAC_{k_1, k_2}$is forgery resilient MAC-code for arbitrary $x$ of arbitrary size.
+\end{theorem}
+\begin{proof}
+    Proof by invitational modelling with use of proof from the opposite 
+\end{proof}
+
+\begin{remark}
+    For $HMAC_{k}(X)$ it is not as simple to prove the resilience, because $k_1$ and $k_2$ are not random in general. There is a need of more strict requirements or belief in resilience.
+\end{remark}
+
+\begin{remark}
+    RFS 2104, ISO: specification of $HMAC_k$
+    \begin{enumerate}
+        \item Key alignment $|k| \leqslant m \rightarrow$ extend with sero bits, i.e. $|k| > m \Rightarrow \cap{k} := \h(k)||0...0$, so  $|\cap{k}| = m$.
+        \item $opad = 0x5C5C...5C$, $ipad = 0x3636...36$.
+    \end{enumerate}
+\end{remark}
+
+
+\begin{definition}[CBC-MAC]
+    Iterative MAC-code, write as $CBCMAC_k(x)$.
+    \begin{enumerate}
+        \item $H_0 := 0^n;$
+        \item $H_i := E_k(H_{i-1} \oplus x_i), i = \overline{1, t};$
+        \item $T := H_t.$
+    \end{enumerate}
+\end{definition}
+
+\begin{definition}[CFB-MAC]
+    \begin{enumerate}
+        Iterative MAC-code, write as $CFBMAC_k(x)$.
+        \item $H_0 := 0^n;$
+        \item $H_i := E_k(H_{i-1}) \oplus x_i, i = \overline{1, t};$
+        \item $T := H_t.$
+    \end{enumerate}
+\end{definition}
+
+\begin{definition}[RIPE-MAC]
+    Iterative MAC-code, write as $RIPEMAC_k(x)$.
+    \begin{enumerate}
+        \item $H_0 := 0^n;$
+        \item $H_i := E_k(H_{i-1} \oplus x_i) \oplus x_i, i = \overline{1, t};$
+        \item $T := H_t.$
+    \end{enumerate}
+\end{definition}
+
+\begin{definition}[SCFB-MAC]
+    \begin{enumerate}
+        Iterative MAC-code, write as $CFBMAC_k(x)$.
+        \item $H_0 := 0^n;$
+        \item $H_i := E_k(H_{i-1}) \oplus x_i, i = \overline{1, t};$
+        \item $T := H_1 \oplus H_2 \oplus ... \oplus H_t.$
+    \end{enumerate}
+\end{definition}
+
+

@@ -1,0 +1,75 @@
+\chapter{Cryptography}
+\localtableofcontents
+
+\section{Symetrical cryptography}
+
+
+\section{Asymetrical cryptography}
+
+Some rules
+\begin{enumerate}
+    \item Moral: Don’t share a common n among a group of users. 
+    \item Moral: Pad messages with random values before encrypting them;
+        make sure m is about the same size as n.
+    \item Moral: Choose a large value for key (for example for d in RSA).
+    \item — Knowledge of one encryption/decryption pair of exponents for
+        a given modulus enables an attacker to factor the modulus.
+    \item — Knowledge of one encryption/decryption pair of exponents for
+        a given modulus enables an attacker to calculate other
+        encryption/decryption pairs without having to factor n.
+    \item — A common modulus should not be used in a protocol using RSA in
+        a communications network. (This should be obvious from the previous
+        two points.)
+    \item — Messages should be padded with random values to prevent attacks
+        on low encryption exponents.
+    \item — The decryption exponent should be large. 
+\end{enumerate}
+
+
+RSA Encryption
+\begin{enumerate}
+    \item[]\textbf{Public Key:}
+    $n$ product of two primes, $p$ and $q$ ($p$ and $q$ must remain secret)
+    $e$ relatively prime to $(p - 1)(q - 1)$.
+    \item[]\textbf{Private Key:}
+    $d^{e-1} \mod ((p - 1)(q - 1)).$
+    \item[]\textbf{Encrypting:}
+    $c = me \mod n.$
+    \item[]\textbf{Decrypting:}
+    $m = cd \mod n.$
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+% \section{Text encryption}
+
+% \section{Random generators}
+% In \cite{BS15}, we can see some examples of random generators.
+
+% In \cite{BS15} we can see, that the best real random generators are
+% maden with use of real world randomnesss.
+
+% \section{Literture overview}
+
+% \begin{table}[!ht]
+%     \centering
+%     \begin{tabular}{c|c|c|c|c|c|c}
+%                     & Type    & Sym & Asym & Hash & randomness & protocols\\
+%         \hline\hline
+%         \cite{BS15} & Glosary & Yes & Yes  & Yes  & Yes        & Yes \\
+%     \end{tabular}
+%     \caption{Caption}
+%     \label{tab:my_label}
+% \end{table}
+
+
+% Book \cite{BS15} -- is general overview of begining of cryptography.
+
+
